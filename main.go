@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strconv"
 	"strings"
 )
 
@@ -12,16 +15,22 @@ type Task struct {
 var tasks []Task
 
 func main() {
-	var command string
 
 	fmt.Println("Welcome to my todie-godie todo list")
-	fmt.Println("kya kya milega: add <task>, list, delete <index>, dafahojao")
+	fmt.Println("kya kya milega: add <task>, list, delete <index>, exit")
+
+	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Printf("$ ")
-		fmt.Scanln(&command)
+		line, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-		parts := strings.SplitN(command, " ", 2)
+		parts := strings.SplitN(line, " ", 2)
+		last := len(parts) - 1
+		parts[last] = strings.TrimSuffix(parts[last], "\n")
 
 		switch parts[0] {
 		case "add":
@@ -32,13 +41,13 @@ func main() {
 			tasks = append(tasks, Task{Description: parts[1]})
 			fmt.Println("Task added")
 
-		case "List":
+		case "list":
 			if len(tasks) == 0 {
 				fmt.Println("No tasks available.")
 
 			} else {
 				for i, task := range tasks {
-					fmt.Printf("%d. %s\n", i, &task.Description)
+					fmt.Printf(" %d. %s\n", i, task.Description)
 				}
 			}
 
@@ -47,14 +56,15 @@ func main() {
 				fmt.Println("Please provide index to delete")
 				continue
 			}
-			var index int
-			_, err := fmt.Scanf(parts[1], "%d", &index)
-			if err != nil || index < 0 || index >= len(tasks) {
+			i := parts[len(parts)-1]
+			num, err := strconv.ParseInt(i, 10, 64)
+
+			if err != nil || num < 0 || int(num) >= len(tasks) {
 				fmt.Println("invalid index. ")
 				continue
 			}
 
-			tasks = append(tasks[:index], tasks[index+1:]...)
+			tasks = append(tasks[:num], tasks[num+1:]...)
 			fmt.Println("Task deleted")
 
 		case "exit":
