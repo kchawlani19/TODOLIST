@@ -25,6 +25,8 @@ type Tasks []Task
 
 const filename = "tasks.json"
 
+// // AddTask creates a new task with the specified description and adds it to the
+// collection of tasks.
 func AddTask(tasks Tasks, description string) error {
 	newID := 1
 	if len(tasks) > 0 {
@@ -41,6 +43,7 @@ func AddTask(tasks Tasks, description string) error {
 	return nil
 }
 
+// ListTask will list all the added tasks
 func ListTask(tasks Tasks) error {
 
 	if len(tasks) == 0 {
@@ -58,6 +61,8 @@ func ListTask(tasks Tasks) error {
 	return nil
 }
 
+// DeleteTask searches for the task with the specified ID and, if found, deletes it from
+// the tasks list.
 func DeleteTask(tasks Tasks, arg string) error {
 
 	id, err := strconv.Atoi(arg)
@@ -87,6 +92,7 @@ func DeleteTask(tasks Tasks, arg string) error {
 	return nil
 }
 
+// Done marks a task as completed based on the provided task ID.
 func Done(tasks Tasks, arg string) {
 	id, err := strconv.Atoi(arg)
 	if err != nil {
@@ -123,6 +129,7 @@ func Done(tasks Tasks, arg string) {
 	}
 }
 
+// saveTasks method will save the tasks
 func saveTasks(tasks Tasks) error {
 	file, err := os.Create(filename)
 	if err != nil {
